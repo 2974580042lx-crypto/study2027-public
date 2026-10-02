@@ -21,6 +21,7 @@ jobs:
           path: |
             StudyDesk/.build
             StudyDesk/build/SourcePackages
+            StudyDesk/build/SimulatorDerivedData
             ~/Library/Caches/org.swift.swiftpm
             ~/.cache/org.swift.swiftpm
           key: studydesk-spm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('StudyDesk/Package.swift', 'StudyDesk/dependencies.json') }}-${{ hashFiles('StudyDesk/StudyDesk/**/*.swift', 'StudyDesk/Tests/**/*.swift') }}
