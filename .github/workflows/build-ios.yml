@@ -15,9 +15,21 @@ jobs:
       - uses: actions/checkout@v6
       - name: Unpack source
         run: unzip -q StudyDesk-source.zip
+      - name: Restore SwiftPM caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            StudyDesk/.build
+            StudyDesk/build/SourcePackages
+            ~/Library/Caches/org.swift.swiftpm
+            ~/.cache/org.swift.swiftpm
+          key: studydesk-spm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('StudyDesk/Package.swift', 'StudyDesk/dependencies.json') }}-${{ hashFiles('StudyDesk/StudyDesk/**/*.swift', 'StudyDesk/Tests/**/*.swift') }}
+          restore-keys: |
+            studydesk-spm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('StudyDesk/Package.swift', 'StudyDesk/dependencies.json') }}-
       - name: Build, test and capture iPhone
         env:
           STUDYDESK_CAPTURE_PREVIEWS: '1'
+          STUDYDESK_BUILD_DEVICE: ${{ github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch' }}
         run: |
           set -o pipefail
           bash StudyDesk/scripts/build-ipa.sh 2>&1 | tee study-build.log
@@ -35,7 +47,7 @@ jobs:
           path: StudyDesk/build/previews
           if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
-        if: success()
+        if: success() && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
         with:
           retention-days: 7
           name: StudyDesk-unsigned-IPA
