@@ -48,8 +48,9 @@ jobs:
           path: StudyDesk/build/previews
           if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
-        if: success() && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
+        if: always() && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
         with:
           retention-days: 7
           name: StudyDesk-unsigned-IPA
           path: StudyDesk/build/StudyDesk-unsigned.ipa
+          if-no-files-found: error
