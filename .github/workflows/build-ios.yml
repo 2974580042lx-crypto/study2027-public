@@ -1,6 +1,11 @@
 name: Build StudyDesk iPhone
 on:
   workflow_dispatch:
+    inputs:
+      full:
+        description: 'Run simulator UI tests and screenshots (about 15 extra minutes)'
+        type: boolean
+        default: false
   push:
     paths:
       - 'StudyDesk-source.zip'
@@ -29,7 +34,7 @@ jobs:
             studydesk-spm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('StudyDesk/Package.swift', 'StudyDesk/dependencies.json') }}-
       - name: Build, test and capture iPhone
         env:
-          STUDYDESK_CAPTURE_PREVIEWS: '1'
+          STUDYDESK_CAPTURE_PREVIEWS: ${{ inputs.full && '1' || '0' }}
           STUDYDESK_BUILD_DEVICE: ${{ github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch' }}
         run: |
           set -o pipefail
